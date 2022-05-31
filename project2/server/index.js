@@ -1,29 +1,24 @@
 'use strict'
 
 const Hapi = require('@hapi/hapi');
-const Inert = require('@hapi/inert');
+const Boom = require('boom');
+const routes   = require('./routes');
 const path = require('path');
+const inert = require('@hapi/inert');
+
 
 const init = async () => {
 
     const server = Hapi.Server({
-        host: 'localhost',
-        port: 1234,
-        routes:{
-            files: {
-                relativeTo: path.join(__dirname, 'routes')
-            }
-        }
+        port: process.env.PORT || 1234,
+        host: process.env.HOST || 'localhost',
+        routes: { cors: true }
     });
 
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: (request, h) => {
-            return h.file('post.js');
-        }
-    });
-    
+    routes.forEach((route)=>{
+        server.route(route);
+      });
+
     await server.start();
     console.log(`Server started on: ${server.info.uri}`);
 
@@ -31,6 +26,7 @@ const init = async () => {
 
 process.on('unhandledRejection', (err) => {
     console.log(err);
+    Boom.badImplementation(err);
     process.exit(1);
 })
 
