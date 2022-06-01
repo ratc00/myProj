@@ -1,5 +1,3 @@
-const api = require('./api');
-
 const routes = [
   {
     method: 'GET',
@@ -10,8 +8,19 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/api/post',
-    options: api.post.post
+    path: '/post',
+    handler: (request, h) => {
+        return h.file('post.js')
+      }
+  },
+  {
+    method: 'POST',
+    path: '/login',
+    handler: (request, h) => {
+        console.log("was a username");
+        console.log("was a password");
+        return "hi";
+      }
   },
 ];
 
